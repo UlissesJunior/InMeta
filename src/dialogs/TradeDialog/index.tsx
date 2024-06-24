@@ -11,10 +11,10 @@ const TradeDialog: React.FC<TradeDialogProps> = ({ cards, onClose, isOpen }) => 
     const cardContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        let timer1: NodeJS.Timeout;
-        let timer2: NodeJS.Timeout;
-        let timer3: NodeJS.Timeout;
-        let timer4: NodeJS.Timeout;
+        let timer1: any;
+        let timer2: any;
+        let timer3: any;
+        let timer4: any;
 
         if (isOpen) {
             timer1 = setTimeout(() => {

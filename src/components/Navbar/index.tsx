@@ -102,7 +102,7 @@ export const Navbar: React.FC = () => {
                             </button>
                             <button
                                 className="bg-indigo-600 px-3 py-2 rounded-md text-sm text-white font-semibold leading-6 text-gray-900 ml-4"
-                                onClick={() => navigate('/signup')}
+                                onClick={() => navigate('/cadastro')}
                             >
                                 Sign up
                             </button>
