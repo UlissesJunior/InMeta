@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { IUser } from '@models/IUser';
 import { login as loginService } from '../services/authService';
 
@@ -17,16 +17,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string) => {
     const { token, user } = await loginService(email, password);
+    const expiryTime = new Date().getTime() + 60 * 60 * 1000; // 60 minutos
     setToken(token);
     setUser(user);
     localStorage.setItem('token', token);
+    localStorage.setItem('tokenExpiry', expiryTime.toString());
+    localStorage.setItem('email', email); 
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('tokenExpiry');
+    localStorage.removeItem('email'); 
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const tokenExpiry = localStorage.getItem('tokenExpiry');
+    if (token && tokenExpiry) {
+      const expiryTime = parseInt(tokenExpiry);
+      if (new Date().getTime() < expiryTime) {
+        setToken(token);
+      } else {
+        logout();
+      }
+    }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout }}>
