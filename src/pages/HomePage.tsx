@@ -3,7 +3,7 @@ import { getAllTrades } from '../services/tradeService';
 import { ITrade } from '@models/ITrade';
 import { Navbar } from '../components/Navbar';
 import { Container } from '../components/Container';
-import { Trade } from '../components/Trade';
+import Trade from '../components/Trade'
 
 const HomePage: React.FC = () => {
     const [trades, setTrades] = useState<ITrade[]>([]);
@@ -37,7 +37,6 @@ const HomePage: React.FC = () => {
         <Container>
             <Navbar />
             <div className='flex flex-col p-8'>
-                {/* //Fazer animação de troca muito foda */}
                 {trades.length ? (
                     trades.map((trade) => (
                         <Trade key={trade.id} trade={trade} />

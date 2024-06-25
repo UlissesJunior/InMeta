@@ -1,5 +1,3 @@
-// components/Cards.tsx
-
 import React, { useEffect, useState } from 'react';
 import { getUserCards, getAllCards, addCardsToUser } from '../../services/cardService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -35,17 +33,19 @@ const Cards: React.FC = () => {
         if (token) {
             try {
                 await addCardsToUser(selectedCardIds, token);
-                toast(`🔐 Cartas adicionadas com sucesso `, {
+                const cardLabel = selectedCardIds.length === 1 ? 'carta adicionada' : 'cartas adicionadas';
+                console.log(selectedCardIds)
+                toast.success(`${cardLabel} com sucesso!`, {
                     position: "top-right",
-                    autoClose: 2000,
+                    autoClose: 3500,
                     hideProgressBar: false,
                     closeOnClick: true,
-                    pauseOnHover: false,
+                    pauseOnHover: true,
                     draggable: true,
                     progress: undefined,
-                    theme: "dark",
+                    theme: "colored",
                     transition: Slide,
-                });
+                  });
                 setIsDialogOpen(false);
                 const updatedCards = await getUserCards(token);
                 setUserCards(updatedCards.filter(card => card.imageUrl));
@@ -93,6 +93,7 @@ const Cards: React.FC = () => {
                 onClose={() => setIsDialogOpen(false)}
                 onAddCards={handleAddCards}
                 onCardSelect={handleCardSelect}
+                userCards={userCards}
             />
         </div>
     );
