@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { ITrade } from '@models/ITrade';
-import TradeDialog from '../../dialogs/TradeDialog';
+import { addFavorite, removeFavorite, isFavorite } from '../../utils/FavoritesUtils';
+import { useAuth } from '../../contexts/AuthContext'; 
+import { Slide, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import TradeDialog from "../../dialogs/TradeDialog";
 
 interface TradeProps {
     trade: ITrade;
+    onRemoveFavorite?: (tradeId: string) => void;
 }
 
-export const Trade: React.FC<TradeProps> = ({ trade }) => {
+const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
     const [currentOfferingIndex, setCurrentOfferingIndex] = useState(0);
     const [currentReceivingIndex, setCurrentReceivingIndex] = useState(0);
     const [intervalId, setIntervalId] = useState<number | null>(null);
     const [showAnimation, setShowAnimation] = useState(false);
+    const { user } = useAuth(); 
+    const [isLiked, setIsLiked] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            setIsLiked(isFavorite(user.email, trade.id));
+        }
+    }, [user, trade.id]);
 
     const offeringCards = trade.tradeCards.filter((tc) => tc.type === 'OFFERING');
     const receivingCards = trade.tradeCards.filter((tc) => tc.type === 'RECEIVING');
@@ -45,6 +58,30 @@ export const Trade: React.FC<TradeProps> = ({ trade }) => {
 
     const handleCloseDialog = () => {
         setShowAnimation(false);
+    };
+
+    const handleLikeClick = () => {
+        if (user) {
+            if (isLiked) {
+                removeFavorite(user.email, trade.id);
+                onRemoveFavorite ? onRemoveFavorite(trade.id) : null; 
+            } else {
+                addFavorite(user.email, trade);
+            }
+            setIsLiked(!isLiked);
+        } else {
+            toast.error("É necessário estar logado para adicionar aos favoritos", {
+                position: "top-right",
+                autoClose: 3500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Slide,
+            });
+        }
     };
 
     useEffect(() => {
@@ -98,8 +135,13 @@ export const Trade: React.FC<TradeProps> = ({ trade }) => {
                         >
                             Aceitar
                         </button>
-                        <button className="flex-none flex items-center justify-center w-9 h-9 rounded-md text-slate-300 border border-slate-200" type="button" aria-label="Like">
-                            <svg width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <button
+                            className={`flex-none flex items-center justify-center w-9 h-9 rounded-md border ${isLiked ? 'text-red-500 border-red-500' : 'text-slate-300 border-slate-200'}`}
+                            type="button"
+                            aria-label="Like"
+                            onClick={handleLikeClick}
+                        >
+                            <svg width="20" height="20" fill="currentColor" aria-hidden="true" className={`transition-transform duration-300 ${isLiked ? 'scale-125' : ''}`}>
                                 <path fillRule="evenodd" clipRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                             </svg>
                         </button>
@@ -135,3 +177,5 @@ export const Trade: React.FC<TradeProps> = ({ trade }) => {
         </div>
     );
 };
+
+export default Trade;
