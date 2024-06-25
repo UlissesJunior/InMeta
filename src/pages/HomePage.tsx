@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
 
     useEffect(() => {
         const fetchTrades = async () => {
-            const newTrades = await getAllTrades(10, currentPage);
+            const newTrades = await getAllTrades(20, currentPage);
             setTrades((prevTrades) => [...prevTrades, ...newTrades]);
         };
 
