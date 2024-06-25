@@ -101,14 +101,14 @@ export const Sign: React.FC<SignProps> = ({ mode, onSubmit }) => {
                 {mode === 'login' ? (
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Não tem uma conta?{' '}
-                        <a className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500" onClick={() => navigate("/cadastro")}>
+                        <a className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer" onClick={() => navigate("/cadastro")}>
                             Registre-se
                         </a>
                     </p>
                 ) : (
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Já tem uma conta?{' '}
-                        <a className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500" onClick={() => navigate("/login")}>
+                        <a className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 cursor-pointer" onClick={() => navigate("/login")}>
                             Entre
                         </a>
                     </p>
