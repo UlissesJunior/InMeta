@@ -61,17 +61,16 @@ const TradeDialog: React.FC<TradeDialogProps> = ({ cards, onClose, isOpen }) => 
     if (!isOpen) return null;
 
     return (
-        <div className="bg-zinc-400 w-full h-full absolute top-0 left-0 ">
+        <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center">
             <div className="animation-container">
                 <div ref={cardContainerRef} className="card-container">
                     {cards.map((card, index) => (
                         <div key={card.id} className={`card card-${index + 1}`} style={{ backgroundImage: `url(${card.imageUrl})` }}></div>
                     ))}
                 </div>
-                <div className="success-message">Troca efetuada com sucesso</div>
             </div>
         </div>
     );
 };
 
-export default TradeDialog; 
+export default TradeDialog;

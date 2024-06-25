@@ -6,7 +6,6 @@
     border-radius: 8px;
     width: 600px;
     height: 600px;
-    background-color: #4c51bf; /* bg-indigo-400 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,33 +13,38 @@
 }
 
 .card-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    transition: transform 1s ease-in-out;
+    position: relative;
+    width: 200px;
+    height: 300px;
+    perspective: 1000px;
 }
 
 .card {
-    width: 100px;
-    height: 150px;
+    width: 100%;
+    height: 100%;
     background-size: cover;
     background-position: center;
     border: 1px solid #000;
     border-radius: 8px;
-    transform-style: preserve-3d;
+    position: absolute;
     transition: transform 1s ease-in-out;
 }
 
 .card-1 {
-    transform: translateZ(0);
+    z-index: 2;
 }
 
 .card-2 {
-    transform: translateZ(0);
+    transform: translateZ(-20px);
+    z-index: 1;
 }
 
-.animate-forward .card {
+.animate-forward .card-1 {
     transform: translateZ(100px);
+}
+
+.animate-forward .card-2 {
+    transform: translateZ(80px);
 }
 
 .animate-swap .card-1 {
@@ -48,20 +52,5 @@
 }
 
 .animate-swap .card-2 {
-    transform: translateZ(100px) translateX(-150px) rotateY(180deg);
-}
-
-.show-success-message {
-    opacity: 1;
-}
-
-.success-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #fff;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transform: translateZ(80px) translateX(-150px) rotateY(180deg);
 }

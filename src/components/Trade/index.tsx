@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ITrade } from '@models/ITrade';
 import { addFavorite, removeFavorite, isFavorite } from '../../utils/FavoritesUtils';
-import { useAuth } from '../../contexts/AuthContext'; 
+import { useAuth } from '../../contexts/AuthContext';
 import { Slide, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TradeDialog from "../../dialogs/TradeDialog";
+import { addTradeHistory } from '../../utils/TradeHistoryUtils';
+import { addCardsToUser } from '../../services/cardService';
+// import { addRejectedTradeId } from "../../utils/RejectedUtils";
 
 interface TradeProps {
     trade: ITrade;
@@ -16,7 +19,7 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
     const [currentReceivingIndex, setCurrentReceivingIndex] = useState(0);
     const [intervalId, setIntervalId] = useState<number | null>(null);
     const [showAnimation, setShowAnimation] = useState(false);
-    const { user } = useAuth(); 
+    const { user, token } = useAuth();
     const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
@@ -52,19 +55,60 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
         setCurrentReceivingIndex(0);
     };
 
-    const handleAccept = () => {
+    const handleAccept = async () => {
+        if (user && token) {
+            try {
+                const cardIds = offeringCards.map(tc => tc.cardId);
+                await addCardsToUser(cardIds, token);
+                addTradeHistory(user.email, trade);
+                setShowAnimation(true);
+
+                setTimeout(() => {
+                    toast.success("Cartas adicionadas com sucesso!", {
+                        position: "top-right",
+                        autoClose: 3500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Slide,
+                    });
+                }, 5000);
+            } catch (error) {
+                toast.error("Erro ao adicionar cartas", {
+                    position: "top-right",
+                    autoClose: 3500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                });
+            }
+        }
         setShowAnimation(true);
     };
 
+
     const handleCloseDialog = () => {
         setShowAnimation(false);
+    };
+
+    const handleReject = () => {
+        // if (user) {
+        //     addRejectedTradeId(user.email, trade.id);
+        // }
     };
 
     const handleLikeClick = () => {
         if (user) {
             if (isLiked) {
                 removeFavorite(user.email, trade.id);
-                onRemoveFavorite ? onRemoveFavorite(trade.id) : null; 
+                onRemoveFavorite ? onRemoveFavorite(trade.id) : null;
             } else {
                 addFavorite(user.email, trade);
             }
@@ -129,9 +173,10 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
                     </div>
                     <div className="flex space-x-4 justify-center mb-6 text-sm font-medium">
                         <button
-                            className="h-10 px-6 font-semibold rounded-md bg-black text-white"
+                            className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-indigo-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`}
                             type="button"
                             onClick={handleAccept}
+                            disabled={!user}
                         >
                             Aceitar
                         </button>
@@ -145,12 +190,12 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
                                 <path fillRule="evenodd" clipRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                             </svg>
                         </button>
-                        <button className="h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900" type="button">
+                        <button className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-red-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`} type="button" onClick={handleReject} disabled={!user}>
                             Recusar
                         </button>
                     </div>
                 </form>
-                <div className="flex-none w-48 relative ">
+                <div className="flex-none w-48 relative">
                     {receivingCards.map((tc, index) => (
                         <img
                             key={tc.id}
