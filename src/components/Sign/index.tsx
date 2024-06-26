@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { GiCardPick } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
+import { Slide, toast } from 'react-toastify';
 
 interface SignProps {
     mode: 'login' | 'register';
@@ -14,6 +16,23 @@ export const Sign: React.FC<SignProps> = ({ mode, onSubmit }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+        if (mode=='register' && !passwordRegex.test(password)) {
+            toast.info('A senha deve ter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.', {
+                position: "top-right",
+                autoClose: 3500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Slide,
+            });
+            return;
+        }
+
         if (mode === 'register') {
             onSubmit(email, password, name);
         } else {
@@ -24,7 +43,7 @@ export const Sign: React.FC<SignProps> = ({ mode, onSubmit }) => {
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img className="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+                <GiCardPick className='mx-auto h-12 w-auto text-indigo-600' />
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {mode === 'login' ? 'Faça o Login em sua conta' : 'Registre-se em nossa plataforma'}
                 </h2>
