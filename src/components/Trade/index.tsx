@@ -7,14 +7,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import TradeDialog from "../../dialogs/TradeDialog";
 import { addTradeHistory } from '../../utils/TradeHistoryUtils';
 import { addCardsToUser } from '../../services/cardService';
-// import { addRejectedTradeId } from "../../utils/RejectedUtils";
+import { deleteTrade } from '../../services/tradeService';
+import { IoMdTrash } from "react-icons/io";
 
 interface TradeProps {
     trade: ITrade;
     onRemoveFavorite?: (tradeId: string) => void;
+    onDeleteTrade?: (tradeId: string) => void;
 }
 
-const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
+const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite, onDeleteTrade }) => {
     const [currentOfferingIndex, setCurrentOfferingIndex] = useState(0);
     const [currentReceivingIndex, setCurrentReceivingIndex] = useState(0);
     const [intervalId, setIntervalId] = useState<number | null>(null);
@@ -93,6 +95,39 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
         setShowAnimation(true);
     };
 
+    const handleDelete = async () => {
+        if (token) {
+            try {
+                await deleteTrade(trade.id, token);
+                if (onDeleteTrade) {
+                    onDeleteTrade(trade.id);
+                }
+                toast.success("Troca excluída com sucesso!", {
+                    position: "top-right",
+                    autoClose: 3500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                });
+            } catch (error) {
+                toast.error("Erro ao excluir a troca", {
+                    position: "top-right",
+                    autoClose: 3500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Slide,
+                });
+            }
+        }
+    };
 
     const handleCloseDialog = () => {
         setShowAnimation(false);
@@ -136,6 +171,8 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
         };
     }, [intervalId]);
 
+    const isUserTradeCreator = user?.id === trade.userId;
+
     return (
         <div>
             <div
@@ -172,27 +209,39 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite }) => {
                         </div>
                     </div>
                     <div className="flex space-x-4 justify-center mb-6 text-sm font-medium">
-                        <button
-                            className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-indigo-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`}
-                            type="button"
-                            onClick={handleAccept}
-                            disabled={!user}
-                        >
-                            Aceitar
-                        </button>
-                        <button
-                            className={`flex-none flex items-center justify-center w-9 h-9 rounded-md border ${isLiked ? 'text-red-500 border-red-500' : 'text-slate-300 border-slate-200'}`}
-                            type="button"
-                            aria-label="Like"
-                            onClick={handleLikeClick}
-                        >
-                            <svg width="20" height="20" fill="currentColor" aria-hidden="true" className={`transition-transform duration-300 ${isLiked ? 'scale-125' : ''}`}>
-                                <path fillRule="evenodd" clipRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-                            </svg>
-                        </button>
-                        <button className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-red-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`} type="button" onClick={handleReject} disabled={!user}>
-                            Recusar
-                        </button>
+                        {isUserTradeCreator ? (
+                            <button
+                                className="h-10 px-6 font-semibold rounded-md bg-red-500 text-white"
+                                type="button"
+                                onClick={handleDelete}
+                            >
+                                <IoMdTrash />
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-indigo-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`}
+                                    type="button"
+                                    onClick={handleAccept}
+                                    disabled={!user}
+                                >
+                                    Aceitar
+                                </button>
+                                <button
+                                    className={`flex-none flex items-center justify-center w-9 h-9 rounded-md border ${isLiked ? 'text-red-500 border-red-500' : 'text-slate-300 border-slate-200'}`}
+                                    type="button"
+                                    aria-label="Like"
+                                    onClick={handleLikeClick}
+                                >
+                                    <svg width="20" height="20" fill="currentColor" aria-hidden="true" className={`transition-transform duration-300 ${isLiked ? 'scale-125' : ''}`}>
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                                    </svg>
+                                </button>
+                                <button className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-red-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`} type="button" onClick={handleReject} disabled={!user}>
+                                    Recusar
+                                </button>
+                            </>
+                        )}
                     </div>
                 </form>
                 <div className="flex-none w-48 relative">

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FaHatWizard } from "react-icons/fa";
-import { MdFavorite } from 'react-icons/md';
+import { MdFavorite, MdHistory, MdClose } from 'react-icons/md';
 import { TbCardsFilled } from 'react-icons/tb';
-import { GiCardPick, GiTrade } from 'react-icons/gi';
+import { GiCardPick, GiCardPlay, GiTrade } from 'react-icons/gi';
 
 interface SidebarProps {
     isHome?: boolean;
@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
             }
         }
     }, [user]);
+
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
     };
@@ -42,10 +43,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
                 <FaHatWizard className={`w-${isHome ? 8 : 12} h-${isHome ? 8 : 12} rounded-full cursor-pointer`} onClick={toggleSidebar} />
             )}
             {isOpen && (
-                <div className="fixed right-0 top-0 z-50 h-screen w-[320px] bg-indigo-600 text-white p-4 flex flex-col justify-between rounded-tl-lg rounded-bl-lg">
+                <div className={`fixed right-0 top-0 z-50 h-screen ${isOpen ? 'w-screen p-8' : 'w-[320px]'} md:w-[320px] bg-indigo-600 text-white p-4 flex flex-col justify-between rounded-tl-lg rounded-bl-lg`}>
                     <div>
-                        <div className="mb-16 flex flex-row align-center items-center">
-                            <GiCardPick className='w-12 h-auto bg-indigo-600 mr-4' /> <p className='text-bold text-2xl'>InMeta Marketplace</p>
+                        <div className="flex justify-between items-center mb-8">
+                            <div className="flex items-center">
+                                <GiCardPick className='w-12 h-auto bg-indigo-600 mr-4' />
+                                <p className='text-bold text-2xl'>InMeta Marketplace</p>
+                            </div>
+                            <MdClose className='w-8 h-8 cursor-pointer' onClick={toggleSidebar} />
                         </div>
                         <ul className="space-y-4">
                             <li
@@ -55,7 +60,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
                                     toggleSidebar();
                                 }}
                             >
-                                <GiTrade className='mr-4 w-6 h-auto' /> <p className='text-bold text-lg'>Centro de Trocas</p>
+                                <GiTrade className='mr-4 w-6 h-auto' />
+                                <p className='text-bold text-lg'>Centro de Trocas</p>
                             </li>
                             <li
                                 className="cursor-pointer hover:bg-indigo-700 p-2 rounded-md text-bold flex flex-row align-center items-center"
@@ -64,7 +70,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
                                     toggleSidebar();
                                 }}
                             >
-                                <TbCardsFilled className='mr-4 w-6 h-auto' /> <p className='text-bold text-lg'>Minhas Cartas</p>
+                                <TbCardsFilled className='mr-4 w-6 h-auto' />
+                                <p className='text-bold text-lg'>Minhas Cartas</p>
+                            </li>
+                            <li
+                                className="cursor-pointer hover:bg-indigo-700 p-2 rounded-md text-bold flex flex-row align-center items-center"
+                                onClick={() => {
+                                    navigate('/minhastrocas');
+                                    toggleSidebar();
+                                }}
+                            >
+                                <GiCardPlay className='mr-4 w-6 h-auto' />
+                                <p className='text-bold text-lg'>Minhas Trocas</p>
                             </li>
                             <li
                                 className="cursor-pointer hover:bg-indigo-700 p-2 rounded-md text-bold flex flex-row align-center items-center"
@@ -73,11 +90,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
                                     toggleSidebar();
                                 }}
                             >
-                                <MdFavorite className='mr-4 w-6 h-auto' /> <p className='text-bold text-lg'>Meus Favoritos</p>
+                                <MdFavorite className='mr-4 w-6 h-auto' />
+                                <p className='text-bold text-lg'>Meus Favoritos</p>
+                            </li>
+                            <li
+                                className="cursor-pointer hover:bg-indigo-700 p-2 rounded-md text-bold flex flex-row align-center items-center"
+                                onClick={() => {
+                                    navigate('/historicodetrocas');
+                                    toggleSidebar();
+                                }}
+                            >
+                                <MdHistory className='mr-4 w-6 h-auto' />
+                                <p className='text-bold text-lg'>Histórico de Trocas</p>
                             </li>
                         </ul>
                     </div>
-                    <div className="flex items-center space-x-4 mt-6">
+                    <div className="flex items-center space-x-4 mt-6 justify-around">
                         {profileImage ? (
                             <img
                                 onClick={toggleSidebar}
@@ -88,23 +116,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isHome }) => {
                         ) : (
                             <FaHatWizard className={`w-${isHome ? 8 : 12} h-${isHome ? 8 : 12} rounded-full cursor-pointer`} onClick={toggleSidebar} />
                         )}
-                        <div>
-                            <p className="font-semibold">{user?.name}</p>
-                            <button
-                                onClick={() => {
-                                    logout();
-                                    toggleSidebar();
-                                    navigate('/');
-                                }}
-                                className="mt-2 px-3 py-1 bg-red-500 rounded-md"
-                            >
-                                Logout
-                            </button>
-                        </div>
+                        <p className="font-semibold">{user?.name}</p>
+                        <button
+                            onClick={() => {
+                                logout();
+                                toggleSidebar();
+                                navigate('/');
+                            }}
+                            className="mt-2 px-3 py-1 bg-red-500 rounded-md"
+                        >
+                            Logout
+                        </button>
                     </div>
                 </div>
             )}
-
         </>
     );
 };
