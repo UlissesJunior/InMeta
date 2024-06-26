@@ -8,7 +8,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import TradeHistoryPage from './pages/TradeHistory';
 import RegisterPage from './pages/RegisterPage';
 import 'react-toastify/dist/ReactToastify.css';
-// import UserTradesPage from './pages/UserTradesPage';
+import UserTradesPage from './pages/UserTradesPage';
 
 const App: React.FC = () => {
   return (
@@ -21,7 +21,7 @@ const App: React.FC = () => {
           <Route path="/cards" element={<CardsPage />} />
           <Route path="/favoritos" element={<FavoritesPage />} />
           <Route path="/historicodetrocas" element={<TradeHistoryPage />} />
-          {/* <Route path="/minhastrocas" element={<UserTradesPage />} />           */}
+          <Route path="/minhastrocas" element={<UserTradesPage />} />          
         </Routes>
     </>
   );
