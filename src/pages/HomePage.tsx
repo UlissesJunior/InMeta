@@ -90,15 +90,15 @@ const HomePage: React.FC = () => {
       if (!token) {
         throw new Error('Token de autenticação não disponível.');
       }
-  
+
       const receivingCards = receivingCardIds.map(id => ({ cardId: id, type: 'RECEIVING' as const }));
       const offeringCards = offeringCardIds.map(id => ({ cardId: id, type: 'OFFERING' as const }));
       const cards = [...receivingCards, ...offeringCards];
-  
+
       await createTrade(cards, token);
       setReceivingCardIds([]);
       setOfferingCardIds([]);
-  
+
       toast.success('Troca criada com sucesso!', {
         position: "top-right",
         autoClose: 3500,
@@ -110,9 +110,12 @@ const HomePage: React.FC = () => {
         theme: "colored",
         transition: Slide,
       });
-  
-      const updatedTrades = await getAllTrades(20, 1); // Recarregar a primeira página de trocas
-      setTrades(updatedTrades);
+
+      setInterval(async () => {
+        const updatedTrades = await getAllTrades(20, 1);
+        setTrades(updatedTrades);
+      }, 4000);
+      
     } catch (error) {
       toast.error('Erro ao criar troca!', {
         position: "top-right",
@@ -127,7 +130,11 @@ const HomePage: React.FC = () => {
       });
     }
   };
-  
+
+  const handleDeleteTrade = (tradeId: string) => {
+    setTrades(prevTrades => prevTrades.filter(trade => trade.id !== tradeId));
+  };
+
   return (
     <>
       <Navbar />
@@ -136,15 +143,15 @@ const HomePage: React.FC = () => {
           <div className="fixed right-4 bottom-4">
             {token && (
               <button
-                className="z-40 bg-indigo-600 px-3 py-2 rounded-md text-sm text-white font-semibold leading-6 text-gray-900"
+                className="z-40 bg-indigo-600 px-4 py-2 rounded-md text-md text-white font-semibold leading-8"
                 onClick={() => setReceivingDialogOpen(true)}
               >
                 Nova Troca
               </button>
             )}
           </div>
-          {trades.map((trade) => (
-            <Trade key={trade.id} trade={trade} />
+          {trades.map((trade, index) => (
+            <Trade key={trade.id + index} trade={trade} onDeleteTrade={handleDeleteTrade} />
           ))}
         </div>
       </Container>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import './index.css';
 
 interface TradeDialogProps {
@@ -8,8 +8,6 @@ interface TradeDialogProps {
 }
 
 const TradeDialog: React.FC<TradeDialogProps> = ({ cards, onClose, isOpen }) => {
-    const cardContainerRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         let timer1: any;
         let timer2: any;
@@ -18,29 +16,30 @@ const TradeDialog: React.FC<TradeDialogProps> = ({ cards, onClose, isOpen }) => 
 
         if (isOpen) {
             timer1 = setTimeout(() => {
-                if (cardContainerRef.current) {
-                    cardContainerRef.current.classList.add('animate-forward');
+                const cardContainer = document.querySelector('.card-container');
+                if (cardContainer) {
+                    cardContainer.classList.add('animate-forward');
                 }
             }, 1000);
 
             timer2 = setTimeout(() => {
-                if (cardContainerRef.current) {
-                    cardContainerRef.current.classList.add('animate-swap');
+                const cardContainer = document.querySelector('.card-container');
+                if (cardContainer) {
+                    cardContainer.classList.add('animate-swap');
                 }
             }, 2000);
 
             timer3 = setTimeout(() => {
-                if (cardContainerRef.current) {
-                    if (cards.length > 1) {
-                        const card1 = cardContainerRef.current.querySelector('.card-1') as HTMLDivElement;
-                        const card2 = cardContainerRef.current.querySelector('.card-2') as HTMLDivElement;
-                        if (card1 && card2) {
-                            const tempImageUrl = card1.style.backgroundImage;
-                            card1.style.backgroundImage = card2.style.backgroundImage;
-                            card2.style.backgroundImage = tempImageUrl;
-                        }
+                const cardContainer = document.querySelector('.card-container');
+                if (cardContainer) {
+                    const card1 = document.querySelector('.card-1') as HTMLDivElement;
+                    const card2 = document.querySelector('.card-2') as HTMLDivElement;
+                    if (card1 && card2) {
+                        const tempImageUrl = card1.style.backgroundImage;
+                        card1.style.backgroundImage = card2.style.backgroundImage;
+                        card2.style.backgroundImage = tempImageUrl;
                     }
-                    cardContainerRef.current.classList.remove('animate-forward', 'animate-swap');
+                    cardContainer.classList.remove('animate-forward', 'animate-swap');
                 }
             }, 4000);
 
@@ -52,21 +51,29 @@ const TradeDialog: React.FC<TradeDialogProps> = ({ cards, onClose, isOpen }) => 
             clearTimeout(timer2);
             clearTimeout(timer3);
             clearTimeout(timer4);
-            if (cardContainerRef.current) {
-                cardContainerRef.current.classList.remove('animate-forward', 'animate-swap');
+            const cardContainer = document.querySelector('.card-container');
+            if (cardContainer) {
+                cardContainer.classList.remove('animate-forward', 'animate-swap');
+            }
+            if(cards.length > 2) {
+                onClose();
             }
         };
+
     }, [isOpen, onClose, cards]);
 
     if (!isOpen) return null;
 
+    // Ensuring only the first two cards are used for animation
+    const card1 = cards[0] || { imageUrl: '', id: 'card-1' };
+    const card2 = cards[1] || { imageUrl: '', id: 'card-2' };
+
     return (
         <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center">
             <div className="animation-container">
-                <div ref={cardContainerRef} className="card-container">
-                    {cards.map((card, index) => (
-                        <div key={card.id} className={`card card-${index + 1}`} style={{ backgroundImage: `url(${card.imageUrl})` }}></div>
-                    ))}
+                <div className="card-container">
+                    <div className="card card-1" style={{ backgroundImage: `url(${card1.imageUrl})` }}></div>
+                    <div className="card card-2" style={{ backgroundImage: `url(${card2.imageUrl})` }}></div>
                 </div>
             </div>
         </div>

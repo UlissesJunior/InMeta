@@ -11,7 +11,7 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (email: string, password: string, nome?: string) => {
     try {
       await register(nome!, email, password);
-      toast.success('Logado com sucesso!', {
+      toast.success('Registrado com sucesso!', {
         position: "top-right",
         autoClose: 3500,
         hideProgressBar: false,

@@ -149,7 +149,7 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite, onDeleteTrade })
             }
             setIsLiked(!isLiked);
         } else {
-            toast.error("É necessário estar logado para adicionar aos favoritos", {
+            toast.info("É necessário estar logado para adicionar aos favoritos", {
                 position: "top-right",
                 autoClose: 3500,
                 hideProgressBar: false,
@@ -215,7 +215,7 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite, onDeleteTrade })
                                 type="button"
                                 onClick={handleDelete}
                             >
-                                <IoMdTrash />
+                                <IoMdTrash className="h-6 w-6"/>
                             </button>
                         ) : (
                             <>
@@ -237,7 +237,7 @@ const Trade: React.FC<TradeProps> = ({ trade, onRemoveFavorite, onDeleteTrade })
                                         <path fillRule="evenodd" clipRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                                     </svg>
                                 </button>
-                                <button className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-red-500 text-white' : 'bg-gray-400 cursor-not-allowed'}`} type="button" onClick={handleReject} disabled={!user}>
+                                <button className={`h-10 px-6 font-semibold rounded-md ${user ? 'bg-red-500 text-white cursor-not-allowed' : 'bg-gray-400 cursor-not-allowed'}`} type="button" onClick={handleReject} disabled={!user}>
                                     Recusar
                                 </button>
                             </>

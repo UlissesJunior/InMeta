@@ -29,7 +29,6 @@ const UserTradesPage: React.FC = () => {
 
     const handleDeleteTrade = (tradeId: string) => {
         setUserTrades(prevTrades => prevTrades.filter(trade => trade.id !== tradeId));
-        toast.success('Trade excluída com sucesso!');
     };
 
     return (
