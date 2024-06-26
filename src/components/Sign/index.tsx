@@ -19,7 +19,7 @@ export const Sign: React.FC<SignProps> = ({ mode, onSubmit }) => {
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
         if (mode=='register' && !passwordRegex.test(password)) {
-            toast.info('A senha deve ter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.', {
+            toast.info('A senha deve ter pelo menos 8 dígitos, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.', {
                 position: "top-right",
                 autoClose: 3500,
                 hideProgressBar: false,
